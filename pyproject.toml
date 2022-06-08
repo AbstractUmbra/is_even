@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "is-even"
+version = "0.1.0"
+description = "Yep"
+authors = ["Alex Nørgaard <Umbra@AbstractUmbra.dev>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "is_even"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "*"
+uvicorn = "*"
+gunicorn = "*"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
