@@ -5,13 +5,12 @@ description = "Yep"
 authors = ["Alex Nørgaard <Umbra@AbstractUmbra.dev>"]
 license = "The Unlicense"
 readme = "README.md"
-packages = [{include = "is_even"}]
+# packages = [{include = "is_even"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "*"
 uvicorn = "*"
-gunicorn = "*"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
