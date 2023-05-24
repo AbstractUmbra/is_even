@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -38,8 +38,7 @@ RUN apt-get update \
     gnutls-dev \
     libmagic-dev
 
-RUN curl -sSL https://install.python-poetry.org | python - --version 1.2.0
-
+RUN curl -sSL https://install.python-poetry.org | python -
 # copy project requirement files here to ensure they will be cached.
 WORKDIR /app
 COPY poetry.lock pyproject.toml ./
