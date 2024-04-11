@@ -14,11 +14,13 @@ A typical API response will be the following format:
 ```
 
 We even support floating point integers!
-```json
+
 ❯ curl https://is-even.abstractumbra.dev/12.3
+```json
 {
     "number":12.3,
     "is_even":false
 }
+```
 
 This entire repository and it's usage is satirical.
