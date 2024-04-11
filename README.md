@@ -1,8 +1,8 @@
 # Is Even
 
-A small, asynchronous and intelligent API to tell you if a provided integer is even, or not!
+A blazingly � fast � API to check whether a number is even or not!
 
-This is currently running [here](https://is-even.fly.dev/12).
+This is currently running [here](https://is-even.abstractumbra.dev/12).
 
 A typical API response will be the following format:
 
@@ -12,5 +12,13 @@ A typical API response will be the following format:
     "is_even": true
 }
 ```
+
+We even support floating point integers!
+```json
+❯ curl https://is-even.abstractumbra.dev/12.3
+{
+    "number":12.3,
+    "is_even":false
+}
 
 This entire repository and it's usage is satirical.

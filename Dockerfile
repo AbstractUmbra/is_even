@@ -1,50 +1,32 @@
-FROM python:3.11-slim
+FROM rust:latest as builder
 
-ENV PYTHONUNBUFFERED=1 \
-    # prevents python creating .pyc files
-    PYTHONDONTWRITEBYTECODE=1 \
-    \
-    # pip
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100 \
-    \
-    # poetry
-    # https://python-poetry.org/docs/configuration/#using-environment-variables
-    # make poetry install to this location
-    POETRY_HOME="/opt/poetry" \
-    # make poetry create the virtual environment in the project's root
-    # it gets named `.venv`
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    # do not ask any interactive question
-    POETRY_NO_INTERACTION=1 \
-    \
-    # paths
-    # this is where our requirements + virtual environment will live
-    PYSETUP_PATH="/opt/pysetup" \
-    VENV_PATH="/opt/pysetup/.venv"
+ARG APP_NAME=is_even
+ENV APP_NAME=${APP_NAME}
 
-ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
-
-RUN apt-get update \
-    && apt-get install --no-install-recommends -y \
-    git \
-    # deps for installing poetry
-    curl \
-    # deps for building python deps
-    build-essential \
-    libcurl4-gnutls-dev \
-    gnutls-dev \
-    libmagic-dev
-
-RUN curl -sSL https://install.python-poetry.org | python -
-# copy project requirement files here to ensure they will be cached.
 WORKDIR /app
-COPY poetry.lock pyproject.toml ./
 
-# install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
-RUN poetry install --only main
+RUN apt-get update -y && apt-get upgrade -y && apt-get install musl-tools -y
 
-COPY . /app/
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src/ && echo "fn main() {}" > src/main.rs
+RUN rustup target add x86_64-unknown-linux-musl
 
-ENTRYPOINT ["poetry", "run", "python", "main.py"]
+RUN cargo build --release --target x86_64-unknown-linux-musl
+COPY src src
+RUN touch src/main.rs
+RUN cargo build --release --target x86_64-unknown-linux-musl
+
+RUN strip target/x86_64-unknown-linux-musl/release/$APP_NAME
+
+
+FROM alpine:latest
+
+ARG APP_NAME=is_even
+ENV APP_NAME=${APP_NAME}
+ENV ROCKET_PROFILE=release
+
+WORKDIR /app
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/$APP_NAME .
+COPY ./Rocket.toml /app/Rocket.toml
+
+CMD ./$APP_NAME
