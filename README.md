@@ -22,5 +22,3 @@ We even support floating point integers!
     "is_even":false
 }
 ```
-
-This entire repository and it's usage is satirical.
