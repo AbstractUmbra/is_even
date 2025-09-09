@@ -6,9 +6,3 @@ services:
     container_name: is_even
     volumes:
       - ./static/:/app/static/:ro
-    networks:
-      main:
-
-networks:
-  main:
-    external: true
