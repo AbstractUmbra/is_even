@@ -5,6 +5,7 @@ use std::ops::Rem;
 
 use rocket::{
     fs::{relative, FileServer},
+    response::Redirect,
     serde::{json::Json, Serialize},
 };
 
@@ -17,6 +18,11 @@ struct FunnyError(&'static str);
 struct EvenResult {
     number: f64,
     is_even: bool,
+}
+
+#[get("/")]
+async fn home() -> Redirect {
+    Redirect::to(uri!("/12"))
 }
 
 #[get("/<number>")]
@@ -40,7 +46,7 @@ async fn is_even(number: f64) -> Result<Json<EvenResult>, FunnyError> {
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
     let _ = rocket::build()
-        .mount("/", routes![is_even])
+        .mount("/", routes![home, is_even])
         .mount("/", FileServer::from(relative!("static/images")))
         .launch()
         .await?;
